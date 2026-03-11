@@ -8,18 +8,19 @@ import glob
 
 # Map of font display names to search patterns
 FONT_SEARCH_MAP = {
-    "Times New Roman": ["times new roman", "timesnewroman", "timesnewromanmt"],
-    "Arial": ["arial.ttf", "arialmt.ttf", "arial "],
-    "Old English": ["oldenglishtext", "old english", "engrossedtext"],
-    "Century Gothic": ["century gothic", "centurygothic"],
-    "Broadway": ["broadway"],
-    "Myriad Pro": ["myriadpro", "myriad pro"],
-    "Comic Sans": ["comicsansms", "comic sans"],
+    # Windows filename patterns (case-insensitive substring match against filename)
+    "Times New Roman": ["times.ttf", "timesnewroman", "times new roman", "timesnr"],
+    "Arial": ["arial.ttf", "arialmt", "arial"],
+    "Old English": ["oldengl", "oldeng", "old english", "engrossedtext"],
+    "Century Gothic": ["gothic.ttf", "centurygothic", "century gothic"],
+    "Broadway": ["broadw", "broadway"],
+    "Myriad Pro": ["myriadpro", "myriad pro", "myriad"],
+    "Comic Sans": ["comic.ttf", "comicsans", "comic sans"],
     "Cortado": ["cortado"],
-    "Mr. Dafoe": ["mrdafoe", "mr dafoe", "mrdafoe"],
+    "Mr. Dafoe": ["mrdafoe", "mr dafoe"],
     "Niconne": ["niconne"],
     "Adage Script": ["adagescript", "adage script", "adage"],
-    "Stencil": ["stencil"],
+    "Stencil": ["stencil.ttf", "stencil"],
     "Univia Pro": ["univiapro", "univia pro", "univia"],
 }
 

@@ -190,8 +190,14 @@ def generate_eps(order):
     drawing.add(outline)
 
     # Place text lines centered
-    total_text_height = line_height * len(lines) - (line_height - font_size)
-    y_start = h / 2 + total_text_height / 2 - font_size
+    n = len(lines)
+    # y_start = baseline of first (top) line
+    # Visual center of text block sits at h/2
+    # ascent ~ 0.72 * font_size, descent ~ 0.2 * font_size
+    ascent = font_size * 0.72
+    descent = font_size * 0.20
+    block_height = (n - 1) * line_height + ascent + descent
+    y_start = h / 2 + block_height / 2 - ascent
 
     for i, line in enumerate(lines):
         line_width = measure_text(line, rl_font, font_size)
@@ -336,8 +342,11 @@ def generate_svg(order):
     outline = make_plate_outline_path(w, h, order.get("corner", "Square"))
     drawing.add(outline)
 
-    total_text_height = line_height * len(lines) - (line_height - font_size)
-    y_start = h / 2 + total_text_height / 2 - font_size
+    n = len(lines)
+    ascent = font_size * 0.72
+    descent = font_size * 0.20
+    block_height = (n - 1) * line_height + ascent + descent
+    y_start = h / 2 + block_height / 2 - ascent
 
     for i, line in enumerate(lines):
         line_width = measure_text(line, rl_font, font_size)
