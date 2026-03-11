@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Font Status – Maker Plates</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background:#f0f2f5; color:#333; padding:32px; }
+        h1 { margin-bottom:20px; font-size:1.3rem; }
+        table { background:white; border-radius:8px; border-collapse:collapse; width:100%; max-width:700px; box-shadow:0 2px 8px rgba(0,0,0,.08); }
+        th { background:#1a1a2e; color:white; padding:10px 16px; text-align:left; font-size:0.85rem; }
+        td { padding:10px 16px; border-bottom:1px solid #f0f2f5; font-size:0.9rem; }
+        .found { color:#16a34a; font-weight:600; }
+        .missing { color:#dc2626; font-weight:600; }
+        .path { font-size:0.78rem; color:#888; word-break:break-all; }
+        a { color:#1a1a2e; }
+    </style>
+</head>
+<body>
+    <h1>Font Status</h1>
+    <p style="margin-bottom:16px;color:#666;font-size:0.9rem">Fonts found on this machine. Missing fonts will fall back to Helvetica.</p>
+    <table>
+        <tr><th>Font</th><th>Status</th><th>Path</th></tr>
+        {% for f in fonts %}
+        <tr>
+            <td>{{ f.name }}</td>
+            <td class="{{ 'found' if f.found else 'missing' }}">{{ '✓ Found' if f.found else '✗ Missing' }}</td>
+            <td class="path">{{ f.path }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <p style="margin-top:16px"><a href="/">← Back to Generator</a></p>
+</body>
+</html>

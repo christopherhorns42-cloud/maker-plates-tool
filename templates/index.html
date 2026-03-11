@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maker Plates – Design Generator</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f0f2f5;
+            color: #333;
+            min-height: 100vh;
+        }
+
+        header {
+            background: #1a1a2e;
+            color: white;
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        header h1 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        header a {
+            color: #aaa;
+            font-size: 0.85rem;
+            text-decoration: none;
+        }
+
+        header a:hover { color: white; }
+
+        .container {
+            max-width: 900px;
+            margin: 32px auto;
+            padding: 0 16px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            padding: 28px 32px;
+            margin-bottom: 24px;
+        }
+
+        .card h2 {
+            font-size: 1rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: #666;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f2f5;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #555;
+        }
+
+        select, input, textarea {
+            padding: 9px 12px;
+            border: 1.5px solid #ddd;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            color: #333;
+            background: white;
+            transition: border-color 0.2s;
+            outline: none;
+            font-family: inherit;
+        }
+
+        select:focus, input:focus, textarea:focus {
+            border-color: #1a1a2e;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 90px;
+            line-height: 1.5;
+        }
+
+        .format-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .format-btn {
+            flex: 1;
+            min-width: 120px;
+            padding: 13px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-eps {
+            background: #1a1a2e;
+            color: white;
+        }
+        .btn-eps:hover { background: #2d2d4e; transform: translateY(-1px); }
+
+        .btn-dxf {
+            background: #2e7d32;
+            color: white;
+        }
+        .btn-dxf:hover { background: #388e3c; transform: translateY(-1px); }
+
+        .btn-svg {
+            background: #b45309;
+            color: white;
+        }
+        .btn-svg:hover { background: #d97706; transform: translateY(-1px); }
+
+        .hint {
+            font-size: 0.78rem;
+            color: #888;
+            margin-top: 3px;
+        }
+
+        .text-tip {
+            background: #f0f9ff;
+            border-left: 3px solid #0ea5e9;
+            padding: 10px 14px;
+            border-radius: 0 6px 6px 0;
+            font-size: 0.82rem;
+            color: #555;
+            margin-top: 6px;
+        }
+
+        .loading {
+            display: none;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            background: #fefce8;
+            border-radius: 8px;
+            color: #854d0e;
+            font-size: 0.9rem;
+        }
+
+        .loading.visible { display: flex; }
+
+        .spinner {
+            width: 18px;
+            height: 18px;
+            border: 2px solid #fde68a;
+            border-top-color: #854d0e;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .error-msg {
+            display: none;
+            background: #fef2f2;
+            border-left: 3px solid #ef4444;
+            padding: 10px 14px;
+            border-radius: 0 6px 6px 0;
+            font-size: 0.85rem;
+            color: #b91c1c;
+            margin-top: 12px;
+        }
+
+        .error-msg.visible { display: block; }
+
+        .success-msg {
+            display: none;
+            background: #f0fdf4;
+            border-left: 3px solid #22c55e;
+            padding: 10px 14px;
+            border-radius: 0 6px 6px 0;
+            font-size: 0.85rem;
+            color: #15803d;
+            margin-top: 12px;
+        }
+
+        .success-msg.visible { display: block; }
+
+        @media (max-width: 600px) {
+            .form-grid { grid-template-columns: 1fr; }
+            .card { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>⚡ Maker Plates — Design Generator</h1>
+    <a href="/font-status">Font Status</a>
+</header>
+
+<div class="container">
+    <form id="plateForm">
+        <!-- Order Details -->
+        <div class="card">
+            <h2>Order Details</h2>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="material">Material</label>
+                    <select id="material" name="material" onchange="updateFinishes()">
+                        {% for mat in materials %}
+                        <option value="{{ mat }}">{{ mat }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="finish">Finish / Color</label>
+                    <select id="finish" name="finish">
+                        {% for finish in materials['Brass'] %}
+                        <option value="{{ finish }}">{{ finish }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Plate Specs -->
+        <div class="card">
+            <h2>Plate Specifications</h2>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="size">Size</label>
+                    <select id="size" name="size">
+                        {% for size in plate_sizes %}
+                        <option value="{{ size }}" {% if size == '4" x 2"' %}selected{% endif %}>{{ size }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="orientation">Orientation</label>
+                    <select id="orientation" name="orientation">
+                        {% for o in orientations %}
+                        <option value="{{ o }}">{{ o }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="corner">Corner Style</label>
+                    <select id="corner" name="corner">
+                        {% for c in corner_styles %}
+                        <option value="{{ c }}">{{ c }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="mounting">Mounting</label>
+                    <select id="mounting" name="mounting">
+                        {% for m in mounting %}
+                        <option value="{{ m }}">{{ m }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Text & Font -->
+        <div class="card">
+            <h2>Text & Font</h2>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="font">Font</label>
+                    <select id="font" name="font">
+                        {% for f in fonts %}
+                        <option value="{{ f }}">{{ f }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group full-width">
+                    <label for="text">Personalization Text</label>
+                    <textarea id="text" name="text" placeholder="Enter the customer's text here...&#10;Use a new line or / to separate multiple lines"></textarea>
+                    <div class="text-tip">
+                        💡 Use <strong>Enter</strong> or <strong>/</strong> to create multiple lines. Text is auto-sized to fit the plate.
+                    </div>
+                </div>
+                <div class="form-group full-width">
+                    <label for="notes">Order Notes <span style="color:#aaa;font-weight:400">(optional)</span></label>
+                    <input type="text" id="notes" name="notes" placeholder="Any special instructions from the customer...">
+                </div>
+            </div>
+        </div>
+
+        <!-- Generate -->
+        <div class="card">
+            <h2>Generate File</h2>
+            <p class="hint" style="margin-bottom:14px">Choose your output format. <strong>EPS</strong> is recommended for the fiber laser. <strong>DXF</strong> as an alternative. <strong>SVG</strong> for previewing in a browser.</p>
+            <div class="format-buttons">
+                <button type="button" class="format-btn btn-eps" onclick="generate('eps')">
+                    ⬇ Download EPS
+                </button>
+                <button type="button" class="format-btn btn-dxf" onclick="generate('dxf')">
+                    ⬇ Download DXF
+                </button>
+                <button type="button" class="format-btn btn-svg" onclick="generate('svg')">
+                    ⬇ Download SVG
+                </button>
+            </div>
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                Generating file…
+            </div>
+            <div class="success-msg" id="successMsg">✓ File generated and downloaded successfully.</div>
+            <div class="error-msg" id="errorMsg"></div>
+        </div>
+    </form>
+</div>
+
+<script>
+    const materialsData = {{ materials | tojson }};
+
+    function updateFinishes() {
+        const mat = document.getElementById('material').value;
+        const finishSel = document.getElementById('finish');
+        const finishes = materialsData[mat] || [];
+        finishSel.innerHTML = finishes.map(f => `<option value="${f}">${f}</option>`).join('');
+    }
+
+    function generate(format) {
+        const form = document.getElementById('plateForm');
+        const formData = new FormData(form);
+        formData.set('format', format);
+
+        const loading = document.getElementById('loading');
+        const errorMsg = document.getElementById('errorMsg');
+        const successMsg = document.getElementById('successMsg');
+
+        loading.classList.add('visible');
+        errorMsg.classList.remove('visible');
+        successMsg.classList.remove('visible');
+
+        fetch('/generate', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(err => { throw new Error(err.error || 'Unknown error'); });
+            }
+            return response.blob();
+        })
+        .then(blob => {
+            // Trigger download
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            const text = document.getElementById('text').value.trim().substring(0, 20).replace(/[^a-zA-Z0-9 ]/g, '').trim() || 'plate';
+            const size = document.getElementById('size').value.replace(/"/g, '').replace(/ /g, '');
+            a.href = url;
+            a.download = `${text}_${size}.${format}`;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            a.remove();
+
+            loading.classList.remove('visible');
+            successMsg.classList.add('visible');
+            setTimeout(() => successMsg.classList.remove('visible'), 4000);
+        })
+        .catch(err => {
+            loading.classList.remove('visible');
+            errorMsg.textContent = '✗ Error: ' + err.message;
+            errorMsg.classList.add('visible');
+        });
+    }
+</script>
+
+</body>
+</html>
